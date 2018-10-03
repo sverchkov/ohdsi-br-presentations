@@ -1,0 +1,151 @@
+\documentclass[final,handout]{beamer}
+
+% OHDSI Symposium posters should be a maximum size of 48 " x 32" (Horizontal)
+
+% 42" x 36"
+\usepackage[size=custom,width=106.68,height=81.28,scale=1.5,debug]{beamerposter}
+
+%% BIB
+%\usepackage[style=authoryear,backend=biber,doi=false,isbn=false,url=false,eprint=false,firstinits=true]{biblatex}
+%\addbibresource{../nems.bib}
+%\addbibresource{../yeast.bib}
+%\renewcommand*{\bibfont}{\scriptsize}
+
+%% FOR FIGURES
+%\usepackage{epstopdf}
+
+%% GRAPHICS
+\usepackage{graphicx}
+\graphicspath{{../figures/},{../images/}}
+\DeclareGraphicsExtensions{.pdf,.png}
+
+%% FOR TABLES
+%\usepackage{colortbl}
+%\usepackage{multirow}
+%\usepackage{rotating}
+
+%% SYMBOLS
+%\DeclareMathOperator*{\argmax}{argmax}
+
+%% COLORS
+% It's good practice to only use a few colors.
+% Defining them here makes it easy to change the color scheme by only changing the colors in one place.
+\definecolor{StrongBlue}{HTML}{20558a} % Matches NIH logo  % NOT USED
+\definecolor{SoftBlue}{HTML}{3F8FD2} %% Need to correct    % NOT USED
+\definecolor{StrongGreen}{HTML}{00733E}                    % NOT USED
+\definecolor{SoftGreen}{HTML}{36D88E}                      % NOT USED
+\definecolor{StrongRed}{HTML}{7E0A26}                      % NOT USED
+\definecolor{SoftRed}{HTML}{D0113F} % Matches UW logo      % NOT USED
+
+\definecolor{MyC}{HTML}{009999}                            % NOT USED
+\definecolor{MyM}{HTML}{990099}                            % NOT USED
+\definecolor{MyY}{HTML}{999900}                            % NOT USED
+\definecolor{MyR}{HTML}{990000}                            % NOT USED
+\definecolor{MyG}{HTML}{009900}                            % NOT USED
+\definecolor{MyB}{HTML}{000099}                            % NOT USED
+\definecolor{ActionRed}{HTML}{990000}                      %
+
+\setbeamercolor{structure}{fg=ActionRed}
+\setbeamercolor{alerted text}{use=structure,fg=structure.fg}
+\setbeamercolor{block title}{use=structure,fg=structure.bg,bg=structure.fg}
+\setbeamercolor{block title example}{use=structure,fg=structure.fg,bg=structure.bg}
+
+%% DRAWING
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+%\usetikzlibrary{fit,calc,arrows,arrows.meta,decorations.pathreplacing,decorations.text,decorations.pathmorphing,backgrounds,fit,positioning,shapes,chains,topaths,matrix,backgrounds}
+
+%\def\firstcircle{(90:0.3cm) circle (0.6cm)}
+%\def\secondcircle{(210:0.3cm) circle (0.6cm)}
+%\def\thirdcircle{(330:0.3cm) circle (0.6cm)}
+
+%\tikzset{%
+%	link/.style={->,>=angle 45,semithick},
+%	var/.style={circle,draw,minimum size=1.5em,align=center, inner sep=0pt, anchor=center},
+%	text block/.style={rectangle, rounded corners, draw=#1, fill=white, thick, text width=5em, align=center},
+%	thick arrow/.style={
+%		-{Triangle[angle=120:1pt 1]},
+%		%     -Triangle,
+%		line width=2em, 
+%		draw=SoftBlue
+%	},
+%	arrow label/.style={
+%		font=\sf,
+%		align=center
+%	},
+%	set mark/.style={
+%		insert path={
+%			node [midway, arrow label, node contents=#1]
+%		}
+%	},
+%	set vertical mark/.style={
+%		insert path={
+%			node [midway, arrow label, node contents=#1, rotate=-90]
+%		}
+%	}
+%}
+
+%% POSTER TEMPLATE DEFINITION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\setbeamertemplate{navigation symbols}{}  % no navigation on a poster
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Baseline Regularization: an R package for identifying adverse and beneficial drug effects from longitudinal observational data}
+\subtitle{yuriy.sverchkov@wisc.edu} % Yes, it's a bit hacky but it's simple.
+\author{Yuriy Sverchkov\textsuperscript{1} \and Zhaobin Kuang\textsuperscript{2} \and Mark Craven\textsuperscript{1,2} \and David Page \textsuperscript{1,2}}
+\institute{\textsuperscript{1}Department of Biostatistics and Medical Informatics, \textsuperscript{2}Department of Computer Sciences, University~of~Wisconsin--Madison}
+
+\begin{document}
+	\begin{frame}[plain] %Everything is going to be inside this one frame
+	% Everything is going to also be inside a tikz picture
+	\begin{tikzpicture}[
+	overlay,
+	remember picture,
+	shift={(current page.north west)},
+	yscale=-1]%,
+	%every node/.style={draw, very thin}]
+	\small%\scriptsize
+	
+	
+	%\draw [very thick,black!40,step=10cm] (0,0) grid (91.44,108.88);
+	%\draw [very thin,black!20,step=5cm] (0,0) grid (91.44,108.88);
+	%\draw (0,1) -- (91.44,1);
+	
+	%%TITLE
+	\matrix at (0.5cm,0.5cm) [anchor=north west, matrix of nodes, nodes={anchor=west}]{
+		\usebeamercolor[fg]{title in headline}{\textbf{\LARGE{\inserttitle}}} \\
+		\usebeamercolor[fg]{author in headline}{\large{\insertauthor}} \\
+		\usebeamercolor[fg]{author in head/foot}{\small{\texttt{\insertsubtitle}}} \\
+		\usebeamercolor[fg]{institute in headline}{\large{\insertinstitute}} \\
+	};
+	%\node[anchor=north west, inner sep=0] at (66cm, 1cm) {\includegraphics[width=10cm]{CPCP-logo-2}};
+	\node[anchor=north west, inner sep=0] at (76cm, 1cm) {\includegraphics[trim={2.5cm 3cm 2.5cm 1cm},width=14cm]{UWlogo_ctr_4c}};
+	
+	%% ABSTRACT
+	%  \node[color=white, fill=red, anchor=south west] at (1cm, 15cm) {\large Abstract};
+	%  \node[anchor=north west, text width=30cm, align=left] at (1cm, 15cm) {
+	%    Advances in systems biology have made clear the importance of network models for capturing knowledge about complex relationships in gene regulation, metabolism, and cellular signaling.
+	%    A common approach to uncovering biological networks involves performing perturbations on elements of the network, such as gene knockdown experiments, and measuring how the perturbation affects some reporter of the process under study.
+	%    We develop context-specific nested effects models (CSNEMs), an approach to inferring such networks that generalizes nested effect models (NEMs).
+	%The main contribution of this work is that CSNEMs explicitly model the participation of a gene in multiple \emph{contexts}, meaning that a gene can appear in multiple places in the network.
+	%    Biologically, the representation of regulators in multiple contexts may indicate that these regulators have distinct roles in different cellular compartments or cell cycle phases.
+	%    We present an evaluation of the method on simulated data as well as on data from a study of the sodium chloride stress response in \textit{Saccharomyces cerevisiae}.
+	%  };
+
+%%%% Leaving this example to work off	
+	%% The task
+%	\node[text=white, fill=ActionRed, anchor=south west] at (1cm, 15cm) {\bf \large The Task};
+%	\node[anchor=north west, text width=26cm] at (1cm, 15cm) {Given a \textbf{high-dimensional gene knockout (KO) screen}, infer a parsimonious causal network that accounts for the pattern of observed phenotypes.};
+%	\begin{scope}[shift={(3cm, 20cm)}, ampersand replacement=\&]
+%	\matrix (mx) at (2,2) [anchor=north west, matrix of nodes, nodes ={black!40, text=black}] {
+%		\& $e_1$ \& $e_2$ \& $e_3$ \& $e_4$ \& $e_5$ \& $e_6$ \&  $e_7$ \& $e_8$ \\
+%		$B\Delta$ \& |[fill]| \& |[fill]| \& \& \& \& \& |[fill]| \& |[fill]| \\
+%		$C\Delta$ \& \& \& \& \& |[fill]| \& |[fill]| \& \& \\
+%	};
+%	\node[anchor=south] at (mx.north) {Effects (Phenotype)};
+%	\node[anchor=south, rotate=90] at (mx.west) {Knockouts};
+%	\node[align=center, text=ActionRed, anchor=north west] at (mx-2-2.north west) {\bf\small Differential Expression \\ KO vs Wild type};
+%	\end{scope}
+
+	\end{tikzpicture}
+\end{frame}
+\end{document}
