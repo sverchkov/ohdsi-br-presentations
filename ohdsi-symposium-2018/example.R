@@ -1,0 +1,3 @@
+library(BaselineRegularization)
+data("test")
+

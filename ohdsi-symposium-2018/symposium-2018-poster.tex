@@ -5,6 +5,8 @@
 % 42" x 36"
 \usepackage[size=custom,width=106.68,height=81.28,scale=1.5,debug]{beamerposter}
 
+\usepackage[utf8]{inputenc}
+
 %% BIB
 %\usepackage[style=authoryear,backend=biber,doi=false,isbn=false,url=false,eprint=false,firstinits=true]{biblatex}
 %\addbibresource{../nems.bib}
@@ -49,6 +51,15 @@
 \setbeamercolor{alerted text}{use=structure,fg=structure.fg}
 \setbeamercolor{block title}{use=structure,fg=structure.bg,bg=structure.fg}
 \setbeamercolor{block title example}{use=structure,fg=structure.fg,bg=structure.bg}
+
+%% CODE
+\usepackage{listings}
+\lstset{
+	frame=tb,
+	language=R,
+	basicstyle={\ttfamily},
+	tabsize=3
+}
 
 %% DRAWING
 \usepackage{tikz}
@@ -101,51 +112,48 @@
 	overlay,
 	remember picture,
 	shift={(current page.north west)},
-	yscale=-1]%,
-	%every node/.style={draw, very thin}]
+	yscale=-1,%]
+	every node/.style={draw, very thin}]
 	\small%\scriptsize
 	
 	
-	%\draw [very thick,black!40,step=10cm] (0,0) grid (91.44,108.88);
-	%\draw [very thin,black!20,step=5cm] (0,0) grid (91.44,108.88);
+	\draw [very thick,black!40,step=10cm] (0,0) grid (106,81);
+	\draw [black!20,step=5cm] (0,0) grid (106,81);
 	%\draw (0,1) -- (91.44,1);
 	
 	%%TITLE
-	\matrix at (0.5cm,0.5cm) [anchor=north west, matrix of nodes, nodes={anchor=west}]{
+	\matrix at (0.5cm,0.5cm) [anchor=north west, matrix of nodes, nodes={anchor=west, text width=90cm}]{
 		\usebeamercolor[fg]{title in headline}{\textbf{\LARGE{\inserttitle}}} \\
 		\usebeamercolor[fg]{author in headline}{\large{\insertauthor}} \\
 		\usebeamercolor[fg]{author in head/foot}{\small{\texttt{\insertsubtitle}}} \\
 		\usebeamercolor[fg]{institute in headline}{\large{\insertinstitute}} \\
 	};
 	%\node[anchor=north west, inner sep=0] at (66cm, 1cm) {\includegraphics[width=10cm]{CPCP-logo-2}};
-	\node[anchor=north west, inner sep=0] at (76cm, 1cm) {\includegraphics[trim={2.5cm 3cm 2.5cm 1cm},width=14cm]{UWlogo_ctr_4c}};
+	\node[anchor=north west, inner sep=0] at (90cm, 1cm) {\includegraphics[trim={2.5cm 3cm 2.5cm 1cm},width=14cm]{UWlogo_ctr_4c}};
 	
 	%% ABSTRACT
-	%  \node[color=white, fill=red, anchor=south west] at (1cm, 15cm) {\large Abstract};
-	%  \node[anchor=north west, text width=30cm, align=left] at (1cm, 15cm) {
-	%    Advances in systems biology have made clear the importance of network models for capturing knowledge about complex relationships in gene regulation, metabolism, and cellular signaling.
-	%    A common approach to uncovering biological networks involves performing perturbations on elements of the network, such as gene knockdown experiments, and measuring how the perturbation affects some reporter of the process under study.
-	%    We develop context-specific nested effects models (CSNEMs), an approach to inferring such networks that generalizes nested effect models (NEMs).
-	%The main contribution of this work is that CSNEMs explicitly model the participation of a gene in multiple \emph{contexts}, meaning that a gene can appear in multiple places in the network.
-	%    Biologically, the representation of regulators in multiple contexts may indicate that these regulators have distinct roles in different cellular compartments or cell cycle phases.
-	%    We present an evaluation of the method on simulated data as well as on data from a study of the sodium chloride stress response in \textit{Saccharomyces cerevisiae}.
-	%  };
+	\begin{scope}[shift={(1cm,15cm)}]
+		\node[color=white, fill=red, anchor=south west] {\large Abstract};
+		\node[anchor=north west, text width=30cm, align=left] {
+			While drugs are designed and indicated to treat specific medical conditions, it is well documented that exposure to a drug often affects a patient’s risk for a medical condition other than the drug’s intended treatment target. Such effects of drug exposures on risk are of interest both in the context of pharmacovigilance and for drug repositioning tasks. Baseline Regularization is an algorithm for identifying such effects on risk in longitudinal observational data (LOD) such as electronic medical records (EMR). We present an implementation of Baseline Regularization, in the form of an R package, that is designed to work with LOD that follows the Observational Medical Outcomes Partnership’s (OMOP) Common Data Model (CDM). Our aim is to facilitate the application of Baseline Regularization by researchers across the Observational Health Data Sciences and Informatics (OHDSI) network in pharmacovigilance, drug repositioning, and other research.
+		};
+	\end{scope}
+	
+	%% Introduction
+	\begin{scope}[shift={(1cm,40cm)}]
+	\node[color=white, fill=red, anchor=south west] {\large Introduction};
+	\node[anchor=north west, text width=30cm, align=left] {
+		While drugs are designed and indicated to treat specific medical conditions, it is well documented that exposure to a drug often affects a patient’s risk for a medical condition other than the drug’s intended treatment target. When the drug elevates the risk of an adverse condition it may lead to an adverse drug event (ADE). Pharmacovigilance, the surveillance and prevention of ADEs caused by pharmacological products after they are introduced to the market, is of great interest to governments, industries, and other stakeholders. Identifying the effect of drug exposure on condition risk is important part of pharmacovigilance. It is also possible that a drug reduces the risk of a condition other than the drug’s intended target. In such a case, the drug may potentially be repurposed/repositioned for treatment of this other condition. Drug repositioning is of great interest to the health industry since it opens up new treatment options while bypassing the slow, expensive, and risky process of developing and testing a new drug. Hence, identifying both adverse and beneficial effects of drug exposures on condition occurrences is of interest in pharmacovigilance and drug repurposing.
+		
+		Baseline Regularization (1) is an efficient and accurate algorithm for identifying the effect of drug exposure on the risk of condition occurrence from LOD. LOD such as EMR contain a wealth of evidence about drug exposures and medical conditions, but the heterogeneity of the data across time and between patients makes it challenging to reliably infer relationships using standard statistical methods. Baseline Regularization explicitly addresses heterogeneity; it fits a time-varying patient-specific baseline risk and teases apart the patient- and time-specific changes in risk from the effects that drug exposures have on the risk of condition occurrence consistently across patients and across time. Here we present an open source implementation of the Baseline Regularization algorithm designed to work with LOD stored in databases that follow the OMOP CDM.
+		
+	};
+	\end{scope}
 
-%%%% Leaving this example to work off	
-	%% The task
-%	\node[text=white, fill=ActionRed, anchor=south west] at (1cm, 15cm) {\bf \large The Task};
-%	\node[anchor=north west, text width=26cm] at (1cm, 15cm) {Given a \textbf{high-dimensional gene knockout (KO) screen}, infer a parsimonious causal network that accounts for the pattern of observed phenotypes.};
-%	\begin{scope}[shift={(3cm, 20cm)}, ampersand replacement=\&]
-%	\matrix (mx) at (2,2) [anchor=north west, matrix of nodes, nodes ={black!40, text=black}] {
-%		\& $e_1$ \& $e_2$ \& $e_3$ \& $e_4$ \& $e_5$ \& $e_6$ \&  $e_7$ \& $e_8$ \\
-%		$B\Delta$ \& |[fill]| \& |[fill]| \& \& \& \& \& |[fill]| \& |[fill]| \\
-%		$C\Delta$ \& \& \& \& \& |[fill]| \& |[fill]| \& \& \\
-%	};
-%	\node[anchor=south] at (mx.north) {Effects (Phenotype)};
-%	\node[anchor=south, rotate=90] at (mx.west) {Knockouts};
-%	\node[align=center, text=ActionRed, anchor=north west] at (mx-2-2.north west) {\bf\small Differential Expression \\ KO vs Wild type};
-%	\end{scope}
-
+	\begin{scope}[shift={(45cm, 35cm)}]
+		\node[anchor=north west, inner sep=0] { \lstinputlisting{example.R} };
+	\end{scope}
+	
 	\end{tikzpicture}
 \end{frame}
 \end{document}
