@@ -131,6 +131,14 @@
 	%\node[anchor=north west, inner sep=0] at (66cm, 1cm) {\includegraphics[width=10cm]{CPCP-logo-2}};
 	\node[anchor=north west, inner sep=0] at (90cm, 1cm) {\includegraphics[trim={2.5cm 3cm 2.5cm 1cm},width=14cm]{UWlogo_ctr_4c}};
 	
+	%% Template:
+	%\begin{scope}[shift={(40cm,15cm)}]
+	%\node[color=white, fill=red, anchor=south west] {\large Section title};
+	%\node[anchor=north west, text width=30cm, align=left] {
+	%	Section text
+	%};
+	%\end{scope}
+	
 	%% ABSTRACT
 	\begin{scope}[shift={(1cm,15cm)}]
 		\node[color=white, fill=red, anchor=south west] {\large Abstract};
@@ -150,7 +158,50 @@
 	};
 	\end{scope}
 
-	\begin{scope}[shift={(45cm, 35cm)}]
+	\begin{scope}[shift={(35cm,15cm)}]
+		\node[color=white, fill=red, anchor=south west] {\large Methods};
+		\node[anchor=north west, text width=30cm, align=left] {
+			Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest. We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days (Figure 1). In the OMOP CDM, observation periods may be explicitly defined, if it is not, we may infer the observation period to last from the first to the last occurrences of conditions, patient visits, or drug exposures. Intervals of exposure to drugs directly correspond to the derived CDM Drug Era table; when this table isn’t available we may infer these intervals from the Drug Exposure clinical data table. The days of condition occurrence are taken to be either the start day of each Condition Era (derived table) or the start day of each Condition Occurrence (clinical table).
+			
+			(interval fig here)
+			
+			Given this view, of the data, each observation period is divided into homogeneous intervals within which the set of drugs to which the patient is exposed and the number of condition occurrences they have experienced is unchanging. We encode exposure to drug $m$ on day $j$ of observation period $i$ in a binary feature $x_{ijm}$, a baseline parameter $\tau_{ij}$ represents the baseline risk of condition occurrence on day $j$ of observation period $i$, a vector of coefficients $\beta_m$ represents the effect of exposure to drug $m$ on condition risk, and the response variable is a binary vector $y_{ij}$ indicating whether the condition occurred on day $j$ of observation period $i$. The log-likelihood function of the model is:
+			
+			$\displaystyle \log \mathcal{L} = $
+			
+			This likelihood function is overparametrized, and to address this issue, Baseline Regularization solves the regularized optimization problem
+			
+			$\displaystyle \arg \min \ldots$
+			
+			Kwong et al. (1) derive the algorithm for solving this optimization efficiently, which we implement in our package.
+			The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
+		};
+	\end{scope}
+
+	%% Results and Discussion:
+	\begin{scope}[shift={(70cm,15cm)}]
+		\node[color=white, fill=red, anchor=south west] {\large Results and Discussion};
+		\node[anchor=north west, text width=30cm, align=left] {
+			We implemented Baseline Regularization and made it available as an R package on github http://github.com/sverchkov/BaselineRegularization. The package is designed to work either with the Standardized Clinical Data Tables or with the Standardized Derived Elements of the OMOP CDM.
+			
+			While it is up to the user to choose appropriate values for the regularization parameters $\lambda_1$, $\lambda_2$, and $\lambda_3$, we provide defaults that have been shown to perform well in previous studies (1). Since we utilize the dplyr package (2) in our conversion of the data from the CDM to the matrix and vector notation used by the optimization problem, our package can work with a variety of database backends as well as in-memory tables (R dataframes), and can handle working with combinations of data sources. For best results with large datasets, however, we recommend that all tables come from the same full-featured relational database. We also provide additional data processing utilities, which enable the user to easily work with different levels of drug and condition abstraction: the data in clinical tables needs to be at the most specific level, but a pharmacovigilance/repurposing analysis may be better performed at a higher level of abstraction, where, instead of using a specific drug as a feature, a researcher might want to use a general category such as “Beta Blockers” as a drug feature.
+			
+			We plan to continue maintaining and extending the package in response to community needs in order to facilitate adoption and application of Baseline Regularization in the OHDSI network and the broader research community.
+			
+		};
+	\end{scope}
+
+
+	%% Refs:
+	\begin{scope}[shift={(70cm,70cm)}]
+	\node[color=white, fill=red, anchor=south west] {\large References};
+	\node[anchor=north west, text width=30cm, align=left] {
+		(todo)
+	};
+	\end{scope}
+
+    %% Code?
+	\begin{scope}[shift={(35cm, 70cm)}]
 		\node[anchor=north west, inner sep=0] { \lstinputlisting{example.R} };
 	\end{scope}
 	
