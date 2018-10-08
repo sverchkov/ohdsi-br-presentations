@@ -140,21 +140,42 @@
 	%\end{scope}
 	
 	%% ABSTRACT
-	\begin{scope}[shift={(1cm,15cm)}]
-		\node[color=white, fill=red, anchor=south west] {\large Abstract};
-		\node[anchor=north west, text width=30cm, align=left] {
-			While drugs are designed and indicated to treat specific medical conditions, it is well documented that exposure to a drug often affects a patient’s risk for a medical condition other than the drug’s intended treatment target. Such effects of drug exposures on risk are of interest both in the context of pharmacovigilance and for drug repositioning tasks. Baseline Regularization is an algorithm for identifying such effects on risk in longitudinal observational data (LOD) such as electronic medical records (EMR). We present an implementation of Baseline Regularization, in the form of an R package, that is designed to work with LOD that follows the Observational Medical Outcomes Partnership’s (OMOP) Common Data Model (CDM). Our aim is to facilitate the application of Baseline Regularization by researchers across the Observational Health Data Sciences and Informatics (OHDSI) network in pharmacovigilance, drug repositioning, and other research.
-		};
-	\end{scope}
+	%\begin{scope}[shift={(1cm,15cm)}]
+	%	\node[color=white, fill=red, anchor=south west] {\large Abstract};
+	%	\node[anchor=north west, text width=30cm, align=left] {
+	%		While drugs are designed and indicated to treat specific medical conditions, it is well documented that exposure to a drug often affects a patient’s risk for a medical condition other than the drug’s intended treatment target. Such effects of drug exposures on risk are of interest both in the context of pharmacovigilance and for drug repositioning tasks. Baseline Regularization is an algorithm for identifying such effects on risk in longitudinal observational data (LOD) such as electronic medical records (EMR). We present an implementation of Baseline Regularization, in the form of an R package, that is designed to work with LOD that follows the Observational Medical Outcomes Partnership’s (OMOP) Common Data Model (CDM). Our aim is to facilitate the application of Baseline Regularization by researchers across the Observational Health Data Sciences and Informatics (OHDSI) network in pharmacovigilance, drug repositioning, and other research.
+	%	};
+	%\end{scope}
 	
 	%% Introduction
-	\begin{scope}[shift={(1cm,40cm)}]
-	\node[color=white, fill=red, anchor=south west] {\large Introduction};
+	\begin{scope}[shift={(1cm,15cm)}]
+	\node[color=white, fill=ActionRed, anchor=south west] {\large Introduction};
 	\node[anchor=north west, text width=30cm, align=left] {
-		While drugs are designed and indicated to treat specific medical conditions, it is well documented that exposure to a drug often affects a patient’s risk for a medical condition other than the drug’s intended treatment target. When the drug elevates the risk of an adverse condition it may lead to an adverse drug event (ADE). Pharmacovigilance, the surveillance and prevention of ADEs caused by pharmacological products after they are introduced to the market, is of great interest to governments, industries, and other stakeholders. Identifying the effect of drug exposure on condition risk is important part of pharmacovigilance. It is also possible that a drug reduces the risk of a condition other than the drug’s intended target. In such a case, the drug may potentially be repurposed/repositioned for treatment of this other condition. Drug repositioning is of great interest to the health industry since it opens up new treatment options while bypassing the slow, expensive, and risky process of developing and testing a new drug. Hence, identifying both adverse and beneficial effects of drug exposures on condition occurrences is of interest in pharmacovigilance and drug repurposing.
+		\emph{Baseline Regularization} is an algorithm for identifying adverse and beneficial effects of drug exposure on a patient's risk of condition occurrence from longtitudonal observational data.
 		
-		Baseline Regularization (1) is an efficient and accurate algorithm for identifying the effect of drug exposure on the risk of condition occurrence from LOD. LOD such as EMR contain a wealth of evidence about drug exposures and medical conditions, but the heterogeneity of the data across time and between patients makes it challenging to reliably infer relationships using standard statistical methods. Baseline Regularization explicitly addresses heterogeneity; it fits a time-varying patient-specific baseline risk and teases apart the patient- and time-specific changes in risk from the effects that drug exposures have on the risk of condition occurrence consistently across patients and across time. Here we present an open source implementation of the Baseline Regularization algorithm designed to work with LOD stored in databases that follow the OMOP CDM.
+		Drug effects on condition risk are of interest for:
+		\begin{itemize}
+		\item \emph{Pharmacovigiallance:} the surveillance and prevention of adverse drug events.
+		\item \emph{Drug repurposing/repositioning:} the use of drugs to treat conditions other than their originally intended target.
+		\end{itemize} 
 		
+		A major challenge of inferring drug effects on condition risk from longtitudonal oservational data is the heterogeneous nature of the data, particularly:
+		\begin{itemize}
+		\item Heterogeneity between patients due to
+			\begin{itemize}
+			\item genetics,
+			\item environmental factors,
+			\item unique events in a patient's history.
+			\end{itemize}
+		\item Heterogeneity across time for a single patient due to
+			\begin{itemize}
+			\item increase of condition risk as a patient ages,
+			\item health-related events during the observation period,
+			\item and other changes in a patient's health over time.
+			\end{itemize}
+		\end{itemize}
+		
+		Baseline Regularization addressed this heterogeneity by explicitly modeling a time-varying patient-sepcific baseline baseline risk for each patient.
 	};
 	\end{scope}
 
