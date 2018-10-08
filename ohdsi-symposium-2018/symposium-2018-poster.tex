@@ -59,6 +59,7 @@
 	language=R,
 	basicstyle={\ttfamily},
 	commentstyle={\it \color{StrongBlue}},
+	stringstyle={\color{ActionRed}},
 	tabsize=3,
 	breaklines=true,
 	postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
@@ -183,9 +184,9 @@
 	\end{scope}
 
 	% Methods
-	\begin{scope}[shift={(37cm,15cm)}]
+	\begin{scope}[shift={(35cm,15cm)}]
 		\node[color=white, fill=ActionRed, anchor=south west] {\large Methods};
-		\node[anchor=north west, text width=30cm, align=left] {
+		\node[anchor=north west, text width=34cm, align=left] {
 			Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest.
 			
 			We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days.
@@ -196,7 +197,9 @@
 			
 			The model likelihood is
 			
-			$\displaystyle \log \mathcal{L} = $
+			{\centering
+			$\displaystyle \log \mathcal{L}(\tau, \beta) = \sum_i \sum_j y_{ij} \left( \tau_{ij} + \sum_m x_{ijm} \beta_m \right) - \exp \left( \tau_{ij} + \sum_m x_{ijm} \beta_m \right)$
+			}
 			
 			where			
 			\begin{description}
@@ -211,7 +214,9 @@
 			
 			This likelihood function is overparametrized, and to address this issue, Baseline Regularization solves the regularized optimization problem
 			
-			$\displaystyle \arg \min \ldots$
+			{\centering
+			$\displaystyle \arg \min_{\tau,\beta} - \log \mathcal L (\tau, \beta) + \lambda_1 \| \beta \|_1 + \sum_i, \sum_j \lambda_2 |\tau_{i, j+1} - \tau_{ij} | + \lambda_3 \| \tau \|_2^2$
+			}
 			
 			Kwong et al. (1) derive the algorithm for solving this optimization efficiently, which we implement in our package.
 			%The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
@@ -221,7 +226,7 @@
 	\end{scope}
 	
 	%% R Package
-	\begin{scope}[shift={(73cm,15cm)}] % was 1, 50
+	\begin{scope}[shift={(73cm,15cm)}]
 	\node[color=white, fill=ActionRed, anchor=south west] {\large R Package};
 	\node[anchor=north west, text width=30cm, align=left] {
 		The package is available on GithHub at \url{https://github.com/sverchkov/BaselineRegularization}
@@ -239,23 +244,26 @@
 		\lstinputlisting{vignette.R} };
 	\end{scope}
 
-	%% Results and Discussion:
-	\begin{scope}[shift={(1cm,50cm)}]
-		\node[color=white, fill=red, anchor=south west] {\large Results and Discussion};
-		\node[anchor=north west, text width=30cm, align=left] {
-			We implemented Baseline Regularization and made it available as an R package on github http://github.com/sverchkov/BaselineRegularization. The package is designed to work either with the Standardized Clinical Data Tables or with the Standardized Derived Elements of the OMOP CDM.
-			
-			While it is up to the user to choose appropriate values for the regularization parameters $\lambda_1$, $\lambda_2$, and $\lambda_3$, we provide defaults that have been shown to perform well in previous studies (1). Since we utilize the dplyr package (2) in our conversion of the data from the CDM to the matrix and vector notation used by the optimization problem, our package can work with a variety of database backends as well as in-memory tables (R dataframes), and can handle working with combinations of data sources. For best results with large datasets, however, we recommend that all tables come from the same full-featured relational database. We also provide additional data processing utilities, which enable the user to easily work with different levels of drug and condition abstraction: the data in clinical tables needs to be at the most specific level, but a pharmacovigilance/repurposing analysis may be better performed at a higher level of abstraction, where, instead of using a specific drug as a feature, a researcher might want to use a general category such as “Beta Blockers” as a drug feature.
-			
-			We plan to continue maintaining and extending the package in response to community needs in order to facilitate adoption and application of Baseline Regularization in the OHDSI network and the broader research community.
-			
-		};
+	\begin{scope}[shift={(73cm,56cm)}]
+	\node[color=white, fill=ActionRed, anchor=south west] {\large Features};
+	\node[anchor=north west, text width=30cm, align=left] {
+		The current version:
+		\begin{itemize}
+		\item Designed to work with databases in OMOP CDM format.
+		\item Can work with databases and in-memory tables.
+		\item Tools for abstracting drug and condition features.
+		\end{itemize}
+		Planned for future versions:
+		\begin{itemize}
+		\item Continuous response variable implementing \cite{citation_needed}.
+		\item Model selection.
+		\end{itemize}
+	};
 	\end{scope}
 
-
 	%% Refs:
-	\begin{scope}[shift={(70cm,70cm)}]
-	\node[color=white, fill=red, anchor=south west] {\large References};
+	\begin{scope}[shift={(73cm,72cm)}]
+	\node[color=white, fill=ActionRed, anchor=south west] {\large References};
 	\node[anchor=north west, text width=30cm, align=left] {
 		(todo)
 	};

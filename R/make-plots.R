@@ -30,30 +30,35 @@ intervals <- tibble(
   group_by( Patient ) %>%
   mutate( Day = cumsum( Length ) - Length/2,
           `Start Day` = cumsum( Length ) - Length,
-          `End Day` = cumsum( Length )-0.001 )
+          `End Day` = cumsum( Length )-0.001 ) %>% ungroup()
 drugs <- tibble(
   Interval = rep( 1:14, 3 ),
   Drug = as.factor( rep( 1:3, each = 14 ) ),
   `Taking Drug` = as.numeric( brData$X ) ) %>%
   filter( `Taking Drug` > 0 ) %>%
-  select( -`Taking Drug` )
+  select( -`Taking Drug` ) %>%
+  mutate( Plot = "Drugs" )
 conditions <- tibble(
   Interval = 1:14,
   Condition = brData$n ) %>%
   filter( Condition > 0 ) %>%
-  mutate( Condition = as.factor( Condition ) )
+  mutate( Condition = as.factor( Condition ) ) %>%
+  mutate( Plot = "Condition occurrence")
 
-data <- left_join( intervals, drugs ) %>% left_join( conditions )
+data <- left_join( intervals, bind_rows( drugs, conditions, intervals %>% select(Interval) %>% mutate( Plot = "Intervals" ) ) )
 
 # Figure for patient data
-ggplot( data = data %>% filter( !is.na( Drug ) ), aes( x=Day, y = Drug, width = Length, fill = Drug ) ) +
-  facet_grid( rows = vars( Patient ), labeller = label_both ) +
-  geom_tile() +
-  geom_vline( aes( xintercept = `Start Day`, color = Condition ), data = data %>% filter( !is.na( Condition ) ) ) +
+ggplot( data = data, aes( x=Day ) ) +
+  facet_grid( Patient+Plot~., labeller = label_both ) +
+  geom_tile(
+    aes( y=Drug, width = Length, fill = Drug ),
+    data = data %>% filter( Plot == "Drugs" ) ) +
+  geom_vline(
+    aes( xintercept = `Start Day` ),
+    data = data %>% filter( Plot == "Condition occurrence" ) ) +
   geom_segment(
     aes( x = `Start Day`, xend = `End Day`, y = 0, yend = 0 ),
-    data = intervals,
-    inherit.aes = F,
+    data = data %>% filter( Plot == "Intervals" ),
     arrow = arrow( ends = "both", angle = 90 ) )
 
 # Fit model
