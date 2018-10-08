@@ -58,7 +58,10 @@
 	frame=tb,
 	language=R,
 	basicstyle={\ttfamily},
-	tabsize=3
+	commentstyle={\it \color{StrongBlue}},
+	tabsize=3,
+	breaklines=true,
+	postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
 }
 
 %% DRAWING
@@ -179,28 +182,65 @@
 	};
 	\end{scope}
 
-	\begin{scope}[shift={(35cm,15cm)}]
-		\node[color=white, fill=red, anchor=south west] {\large Methods};
+	% Methods
+	\begin{scope}[shift={(37cm,15cm)}]
+		\node[color=white, fill=ActionRed, anchor=south west] {\large Methods};
 		\node[anchor=north west, text width=30cm, align=left] {
-			Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest. We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days (Figure 1). In the OMOP CDM, observation periods may be explicitly defined, if it is not, we may infer the observation period to last from the first to the last occurrences of conditions, patient visits, or drug exposures. Intervals of exposure to drugs directly correspond to the derived CDM Drug Era table; when this table isn’t available we may infer these intervals from the Drug Exposure clinical data table. The days of condition occurrence are taken to be either the start day of each Condition Era (derived table) or the start day of each Condition Occurrence (clinical table).
+			Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest.
+			
+			We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days.
+			
+			%In the OMOP CDM, observation periods may be explicitly defined, if it is not, we may infer the observation period to last from the first to the last occurrences of conditions, patient visits, or drug exposures. Intervals of exposure to drugs directly correspond to the derived CDM Drug Era table; when this table isn’t available we may infer these intervals from the Drug Exposure clinical data table. The days of condition occurrence are taken to be either the start day of each Condition Era (derived table) or the start day of each Condition Occurrence (clinical table).
 			
 			(interval fig here)
 			
-			Given this view, of the data, each observation period is divided into homogeneous intervals within which the set of drugs to which the patient is exposed and the number of condition occurrences they have experienced is unchanging. We encode exposure to drug $m$ on day $j$ of observation period $i$ in a binary feature $x_{ijm}$, a baseline parameter $\tau_{ij}$ represents the baseline risk of condition occurrence on day $j$ of observation period $i$, a vector of coefficients $\beta_m$ represents the effect of exposure to drug $m$ on condition risk, and the response variable is a binary vector $y_{ij}$ indicating whether the condition occurred on day $j$ of observation period $i$. The log-likelihood function of the model is:
+			The model likelihood is
 			
 			$\displaystyle \log \mathcal{L} = $
+			
+			where			
+			\begin{description}
+			\item[$i$] patient (or more generally, observation period)
+			\item[$j$] day
+			\item[$m$] drug
+			\item[$x_{ijm}$] inicator of patient $i$'s exposure to drug $m$ on day $j$
+			\item[$y_{ij}$] indicator of condition occurrence for patient $i$ on day $j$
+			\item[$\beta_m$] contribution to condition risk from drug
+			\item[$\tau_{ij}$] baseline risk for patient $i$ on day $j$
+			\end{description}
 			
 			This likelihood function is overparametrized, and to address this issue, Baseline Regularization solves the regularized optimization problem
 			
 			$\displaystyle \arg \min \ldots$
 			
 			Kwong et al. (1) derive the algorithm for solving this optimization efficiently, which we implement in our package.
-			The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
+			%The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
+			
+			(Risk contribution figure)
 		};
+	\end{scope}
+	
+	%% R Package
+	\begin{scope}[shift={(73cm,15cm)}] % was 1, 50
+	\node[color=white, fill=ActionRed, anchor=south west] {\large R Package};
+	\node[anchor=north west, text width=30cm, align=left] {
+		The package is available on GithHub at \url{https://github.com/sverchkov/BaselineRegularization}
+		
+		\textbf{Installation}
+		
+		\lstinputlisting{installation.R}
+		
+		\textbf{Usage}
+		
+		\lstinputlisting{usage.R}
+		
+		An in-depth tutorial can be found in the R vignette
+		
+		\lstinputlisting{vignette.R} };
 	\end{scope}
 
 	%% Results and Discussion:
-	\begin{scope}[shift={(70cm,15cm)}]
+	\begin{scope}[shift={(1cm,50cm)}]
 		\node[color=white, fill=red, anchor=south west] {\large Results and Discussion};
 		\node[anchor=north west, text width=30cm, align=left] {
 			We implemented Baseline Regularization and made it available as an R package on github http://github.com/sverchkov/BaselineRegularization. The package is designed to work either with the Standardized Clinical Data Tables or with the Standardized Derived Elements of the OMOP CDM.
@@ -219,11 +259,6 @@
 	\node[anchor=north west, text width=30cm, align=left] {
 		(todo)
 	};
-	\end{scope}
-
-    %% Code?
-	\begin{scope}[shift={(35cm, 70cm)}]
-		\node[anchor=north west, text width=30cm] { \lstinputlisting{example.R} };
 	\end{scope}
 	
 	\end{tikzpicture}
