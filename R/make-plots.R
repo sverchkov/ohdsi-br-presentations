@@ -22,60 +22,74 @@ brData <- list(
   patients = c( rep( 1, 8 ), rep( 2, 6 ) )
 )
 
+# Fit model
+fit <- fitBaselineRegularization( brData, defineBRParameters( lambda1=0.5, lambda3 = 0) )
+
 # Patient data as a tibble
+
 intervals <- tibble(
-  Patient = brData$patients,
+  Patient = paste( "Patient", brData$patients),
   Interval = 1:14,
   Length = brData$l ) %>%
   group_by( Patient ) %>%
-  mutate( Day = cumsum( Length ) - Length/2,
+  mutate( `Interval Mid` = cumsum( Length ) - Length/2,
           `Start Day` = cumsum( Length ) - Length,
-          `End Day` = cumsum( Length )-0.001 ) %>% ungroup()
+          `End Day` = cumsum( Length )-0.001 ) %>%
+  ungroup()
+
 drugs <- tibble(
   Interval = rep( 1:14, 3 ),
-  Drug = as.factor( rep( 1:3, each = 14 ) ),
+  Drug = rep( 1:3, each = 14 ),
   `Taking Drug` = as.numeric( brData$X ) ) %>%
   filter( `Taking Drug` > 0 ) %>%
-  select( -`Taking Drug` ) %>%
-  mutate( Plot = "Drugs" )
+  left_join( intervals ) %>%
+  select( Patient, Interval, `Interval Mid`, Length, Drug ) %>%
+  mutate( Plot = "LOD", Fill = paste( "Drug", Drug ) )
+
 conditions <- tibble(
   Interval = 1:14,
   Condition = brData$n ) %>%
   filter( Condition > 0 ) %>%
-  mutate( Condition = as.factor( Condition ) ) %>%
-  mutate( Plot = "Condition occurrence")
+  left_join( intervals ) %>%
+  select( Patient, Interval, `Condition Day` = `Start Day` ) %>%
+  mutate( Plot = "LOD", Fill = "Condition occurrence" ) #"Condition occurrence")
 
-data <- left_join( intervals, bind_rows( drugs, conditions, intervals %>% select(Interval) %>% mutate( Plot = "Intervals" ) ) )
+# Data for the stacked area chart - real version
+#risk_data <- bind_rows(
+#  intervals %>% mutate( Risk = fit$t[Interval], `Fill` = "Baseline" ),
+#  intervals %>% inner_join( drugs ) %>%
+#    mutate( Risk = fit$beta[as.integer(Drug)], `Fill` = paste( "Drug", Drug ) ) )
 
-# Figure for patient data
-ggplot( data = data, aes( x=Day ) ) +
-  facet_grid( Patient+Plot~., labeller = label_both ) +
-  geom_tile(
-    aes( y=Drug, width = Length, fill = Drug ),
-    data = data %>% filter( Plot == "Drugs" ) ) +
-  geom_vline(
-    aes( xintercept = `Start Day` ),
-    data = data %>% filter( Plot == "Condition occurrence" ) ) +
-  geom_segment(
-    aes( x = `Start Day`, xend = `End Day`, y = 0, yend = 0 ),
-    data = data %>% filter( Plot == "Intervals" ),
-    arrow = arrow( ends = "both", angle = 90 ) )
-
-# Fit model
-fit <- fitBaselineRegularization( brData, defineBRParameters( lambda1=0.5, lambda3 = 0) )
-
-# Make a stacked area chart
+# Data for the stacked area chart - fake version for a pretty illustrating plot
 risk_data <- bind_rows(
-  intervals %>% mutate( Risk = fit$t[Interval], `Risk Source` = "Baseline" ),
   intervals %>% inner_join( drugs ) %>%
-    mutate( Risk = fit$beta[as.integer(Drug)], `Risk Source` = paste( "Drug", Drug ) ) %>%
-    select( -Drug ) )
+    mutate( Risk = fit$beta[as.integer(Drug)]*100, `Fill` = paste( "Drug", Drug ) ),
+  intervals %>% mutate( Risk = c(5:9,8,8:7,1:3,3:1)/10, `Fill` = "Baseline" ) )
 
 risk_data <- bind_rows(
   risk_data %>% rename( Day = `Start Day` ),
   risk_data %>% rename( Day = `End Day` )
-)
+) %>%
+  select( Patient, Interval, Day, Fill, Risk ) %>%
+  mutate( Plot = "Risk" )
 
-ggplot( risk_data, aes( x = Day, y = Risk, fill = `Risk Source` ) ) +
-  facet_grid( rows = vars( Patient ), labeller = label_both ) +
-  geom_area()
+data <- bind_rows( drugs, conditions, risk_data ) %>%
+  mutate( Fill = factor( Fill, c("Condition occurrence", "Drug 1", "Drug 2", "Drug 3", "Baseline" ) ) )
+
+p = ggplot( data = data, aes( fill = Fill ) ) +
+  facet_grid( Plot~Patient, scale = "free" ) +
+  geom_tile( aes( x = `Interval Mid`, y = Drug, width = Length ) ) +
+  geom_point( aes( x = `Condition Day`, y = 0 ), shape = 21, size = 4 ) + ylim(-0.5,3.5) +
+  geom_area( aes( x = Day, y = Risk ) ) +
+  theme( axis.title.y = element_blank(),
+         axis.text.y = element_blank(),
+         axis.ticks.y = element_blank(),
+         legend.title = element_blank(),
+         legend.position = "top" ) +
+  labs( x = "Day" ) +
+  scale_fill_brewer(palette="Dark2")
+
+ggsave(
+  filename = "figures/patients_plot.pdf",
+  plot = p,
+  width = 12, height = 4, units = "in" )

@@ -8,10 +8,11 @@
 \usepackage[utf8]{inputenc}
 
 %% BIB
-%\usepackage[style=authoryear,backend=biber,doi=false,isbn=false,url=false,eprint=false,firstinits=true]{biblatex}
+\usepackage[style=authoryear,backend=biber,doi=false,isbn=false,url=false,eprint=false,firstinits=true]{biblatex}
+\addbibresource{br.bib}
 %\addbibresource{../nems.bib}
 %\addbibresource{../yeast.bib}
-%\renewcommand*{\bibfont}{\scriptsize}
+\renewcommand*{\bibfont}{\scriptsize}
 
 %% FOR FIGURES
 %\usepackage{epstopdf}
@@ -116,13 +117,13 @@
 	overlay,
 	remember picture,
 	shift={(current page.north west)},
-	yscale=-1,%]
-	every node/.style={draw, very thin}]
+	yscale=-1]
+	%every node/.style={draw, very thin}]
 	\small%\scriptsize
 	
 	
-	\draw [line width=2mm,blue!40,step=5cm] (0,0) grid (106,81);
-	\draw [blue!20,step=1cm] (0,0) grid (106,81);
+	%\draw [line width=2mm,blue!40,step=5cm] (0,0) grid (106,81);
+	%\draw [blue!20,step=1cm] (0,0) grid (106,81);
 	%\draw (0,1) -- (91.44,1);
 	
 	%%TITLE
@@ -153,9 +154,9 @@
 	
 	%% Introduction
 	\begin{scope}[shift={(1cm,15cm)}]
-	\node[color=white, fill=ActionRed, anchor=south west] {\large Introduction};
+	\node[color=white, fill=ActionRed, anchor=south west] {\large Introduction \strut};
 	\node[anchor=north west, text width=30cm, align=left] {
-		\emph{Baseline Regularization} is an algorithm for identifying adverse and beneficial effects of drug exposure on a patient's risk of condition occurrence from longtitudonal observational data.
+		\emph{Baseline Regularization} is an algorithm for identifying adverse and beneficial effects of drug exposure on a patient's risk of condition occurrence from longtitudonal observational data (LOD).
 		
 		Drug effects on condition risk are of interest for:
 		\begin{itemize}
@@ -185,15 +186,14 @@
 
 	% Methods
 	\begin{scope}[shift={(35cm,15cm)}]
-		\node[color=white, fill=ActionRed, anchor=south west] {\large Methods};
+		\node[color=white, fill=ActionRed, anchor=south west] {\large Methods \strut};
 		\node[anchor=north west, text width=34cm, align=left] {
 			Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest.
 			
-			We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days.
+			We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days
+			(top two panels in figure).
 			
 			%In the OMOP CDM, observation periods may be explicitly defined, if it is not, we may infer the observation period to last from the first to the last occurrences of conditions, patient visits, or drug exposures. Intervals of exposure to drugs directly correspond to the derived CDM Drug Era table; when this table isn’t available we may infer these intervals from the Drug Exposure clinical data table. The days of condition occurrence are taken to be either the start day of each Condition Era (derived table) or the start day of each Condition Occurrence (clinical table).
-			
-			(interval fig here)
 			
 			The model likelihood is
 			
@@ -218,16 +218,19 @@
 			$\displaystyle \arg \min_{\tau,\beta} - \log \mathcal L (\tau, \beta) + \lambda_1 \| \beta \|_1 + \sum_i, \sum_j \lambda_2 |\tau_{i, j+1} - \tau_{ij} | + \lambda_3 \| \tau \|_2^2$
 			}
 			
-			Kwong et al. (1) derive the algorithm for solving this optimization efficiently, which we implement in our package.
+			\textcite{kuang2017pharmacovigilance} derive the algorithm for solving this optimization efficiently, which we implement in our package.
 			%The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
 			
-			(Risk contribution figure)
+			The bottom two panels of the figure illustrate a time-varying baseline risk for two different patients.
 		};
 	\end{scope}
 	
+	\node[anchor=north west] at (0cm,56cm) {\includegraphics[width=70cm]{patients_plot}};
+	\node[anchor=south west, text width=69cm, align = left] at (1cm,56cm) {\textbf{Figure:} A toy example using 3 drugs showing a drug-exposure-interval representation of the observational data (LOD) about two patients (top two panels), and an illustration of the contribution of each patient's baseline risk (green) and each drug to each patient's risk of condition occurrence.};
+	
 	%% R Package
 	\begin{scope}[shift={(73cm,15cm)}]
-	\node[color=white, fill=ActionRed, anchor=south west] {\large R Package};
+	\node[color=white, fill=ActionRed, anchor=south west] {\large R Package \strut};
 	\node[anchor=north west, text width=30cm, align=left] {
 		The package is available on GithHub at \url{https://github.com/sverchkov/BaselineRegularization}
 		
@@ -244,7 +247,7 @@
 		\lstinputlisting{vignette.R} };
 	\end{scope}
 
-	\begin{scope}[shift={(73cm,56cm)}]
+	\begin{scope}[shift={(73cm,55cm)}]
 	\node[color=white, fill=ActionRed, anchor=south west] {\large Features};
 	\node[anchor=north west, text width=30cm, align=left] {
 		The current version:
@@ -255,17 +258,19 @@
 		\end{itemize}
 		Planned for future versions:
 		\begin{itemize}
-		\item Continuous response variable implementing \cite{citation_needed}.
+		\item Continuous response variable implementing \textcite{kuang2016computational}.
 		\item Model selection.
 		\end{itemize}
 	};
 	\end{scope}
 
 	%% Refs:
-	\begin{scope}[shift={(73cm,72cm)}]
+	\begin{scope}[shift={(73cm,69cm)}]
 	\node[color=white, fill=ActionRed, anchor=south west] {\large References};
 	\node[anchor=north west, text width=30cm, align=left] {
-		(todo)
+		\fullcite{kuang2016computational}
+		
+		\fullcite{kuang2017pharmacovigilance}
 	};
 	\end{scope}
 	
