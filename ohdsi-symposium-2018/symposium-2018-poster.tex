@@ -8,11 +8,21 @@
 \usepackage[utf8]{inputenc}
 
 %% BIB
-\usepackage[style=authoryear,backend=biber,doi=false,isbn=false,url=false,eprint=false,firstinits=true]{biblatex}
+\usepackage[%
+	style=authoryear,
+	backend=biber,
+	doi=false,
+	isbn=false,
+	url=false,
+	eprint=false,
+	firstinits=true,
+	%mincitenames=1,
+	%maxcitenames=2,
+	uniquelist=false]{biblatex}
 \addbibresource{br.bib}
 %\addbibresource{../nems.bib}
 %\addbibresource{../yeast.bib}
-\renewcommand*{\bibfont}{\scriptsize}
+\renewcommand*{\bibfont}{\small}
 
 %% FOR FIGURES
 %\usepackage{epstopdf}
@@ -33,7 +43,7 @@
 %% COLORS
 % It's good practice to only use a few colors.
 % Defining them here makes it easy to change the color scheme by only changing the colors in one place.
-\definecolor{StrongBlue}{HTML}{20558a} % Matches NIH logo  % NOT USED
+\definecolor{StrongBlue}{HTML}{20558a} % Matches NIH logo  %
 \definecolor{SoftBlue}{HTML}{3F8FD2} %% Need to correct    % NOT USED
 \definecolor{StrongGreen}{HTML}{00733E}                    % NOT USED
 \definecolor{SoftGreen}{HTML}{36D88E}                      % NOT USED
@@ -47,6 +57,7 @@
 \definecolor{MyG}{HTML}{009900}                            % NOT USED
 \definecolor{MyB}{HTML}{000099}                            % NOT USED
 \definecolor{ActionRed}{HTML}{990000}                      %
+\definecolor{LightGray}{HTML}{EEEEEE}
 
 \setbeamercolor{structure}{fg=ActionRed}
 \setbeamercolor{alerted text}{use=structure,fg=structure.fg}
@@ -56,7 +67,8 @@
 %% CODE
 \usepackage{listings}
 \lstset{
-	frame=tb,
+	backgroundcolor = \color{LightGray},
+	%frame=tb,
 	language=R,
 	basicstyle={\ttfamily},
 	commentstyle={\it \color{StrongBlue}},
@@ -69,40 +81,10 @@
 %% DRAWING
 \usepackage{tikz}
 \usetikzlibrary{matrix}
-%\usetikzlibrary{fit,calc,arrows,arrows.meta,decorations.pathreplacing,decorations.text,decorations.pathmorphing,backgrounds,fit,positioning,shapes,chains,topaths,matrix,backgrounds}
-
-%\def\firstcircle{(90:0.3cm) circle (0.6cm)}
-%\def\secondcircle{(210:0.3cm) circle (0.6cm)}
-%\def\thirdcircle{(330:0.3cm) circle (0.6cm)}
-
-%\tikzset{%
-%	link/.style={->,>=angle 45,semithick},
-%	var/.style={circle,draw,minimum size=1.5em,align=center, inner sep=0pt, anchor=center},
-%	text block/.style={rectangle, rounded corners, draw=#1, fill=white, thick, text width=5em, align=center},
-%	thick arrow/.style={
-%		-{Triangle[angle=120:1pt 1]},
-%		%     -Triangle,
-%		line width=2em, 
-%		draw=SoftBlue
-%	},
-%	arrow label/.style={
-%		font=\sf,
-%		align=center
-%	},
-%	set mark/.style={
-%		insert path={
-%			node [midway, arrow label, node contents=#1]
-%		}
-%	},
-%	set vertical mark/.style={
-%		insert path={
-%			node [midway, arrow label, node contents=#1, rotate=-90]
-%		}
-%	}
-%}
 
 %% POSTER TEMPLATE DEFINITION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\setbeamertemplate{navigation symbols}{}  % no navigation on a poster
+\setbeamertemplate{bibliography item}{} %% Don't add document item next to references
 %%%%%%%%%%%%%%%%%%%%%%%
 
 \title{Baseline Regularization: an R package for identifying adverse and beneficial drug effects from longitudinal observational data}
@@ -156,7 +138,7 @@
 	\begin{scope}[shift={(1cm,15cm)}]
 	\node[color=white, fill=ActionRed, anchor=south west] {\large Introduction \strut};
 	\node[anchor=north west, text width=30cm, align=left] {
-		\emph{Baseline Regularization} is an algorithm for identifying adverse and beneficial effects of drug exposure on a patient's risk of condition occurrence from longtitudonal observational data (LOD).
+		\emph{Baseline Regularization} is an algorithm for identifying adverse and beneficial effects of drug exposure from longtitudonal observational data (LOD).
 		
 		Drug effects on condition risk are of interest for:
 		\begin{itemize}
@@ -174,7 +156,7 @@
 			\end{itemize}
 		\item Heterogeneity across time for a single patient due to
 			\begin{itemize}
-			\item increase of condition risk as a patient ages,
+			\item change of condition risk as a patient ages,
 			\item health-related events during the observation period,
 			\item and other changes in a patient's health over time.
 			\end{itemize}
@@ -186,47 +168,47 @@
 
 	% Methods
 	\begin{scope}[shift={(35cm,15cm)}]
-		\node[color=white, fill=ActionRed, anchor=south west] {\large Methods \strut};
-		\node[anchor=north west, text width=34cm, align=left] {
-			Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest.
-			
-			We view each patient’s EMR as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days
-			(top two panels in figure).
-			
-			%In the OMOP CDM, observation periods may be explicitly defined, if it is not, we may infer the observation period to last from the first to the last occurrences of conditions, patient visits, or drug exposures. Intervals of exposure to drugs directly correspond to the derived CDM Drug Era table; when this table isn’t available we may infer these intervals from the Drug Exposure clinical data table. The days of condition occurrence are taken to be either the start day of each Condition Era (derived table) or the start day of each Condition Occurrence (clinical table).
-			
-			The model likelihood is
-			
-			{\centering
-			$\displaystyle \log \mathcal{L}(\tau, \beta) = \sum_i \sum_j y_{ij} \left( \tau_{ij} + \sum_m x_{ijm} \beta_m \right) - \exp \left( \tau_{ij} + \sum_m x_{ijm} \beta_m \right)$
-			}
-			
-			where			
-			\begin{description}
-			\item[$i$] patient (or more generally, observation period)
-			\item[$j$] day
-			\item[$m$] drug
-			\item[$x_{ijm}$] inicator of patient $i$'s exposure to drug $m$ on day $j$
-			\item[$y_{ij}$] indicator of condition occurrence for patient $i$ on day $j$
-			\item[$\beta_m$] contribution to condition risk from drug
-			\item[$\tau_{ij}$] baseline risk for patient $i$ on day $j$
-			\end{description}
-			
-			This likelihood function is overparametrized, and to address this issue, Baseline Regularization solves the regularized optimization problem
-			
-			{\centering
-			$\displaystyle \arg \min_{\tau,\beta} - \log \mathcal L (\tau, \beta) + \lambda_1 \| \beta \|_1 + \sum_i, \sum_j \lambda_2 |\tau_{i, j+1} - \tau_{ij} | + \lambda_3 \| \tau \|_2^2$
-			}
-			
-			\textcite{kuang2017pharmacovigilance} derive the algorithm for solving this optimization efficiently, which we implement in our package.
-			%The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
-			
-			The bottom two panels of the figure illustrate a time-varying baseline risk for two different patients.
-		};
+	\node[color=white, fill=ActionRed, anchor=south west] {\large Methods \strut};
+	\node[anchor=north west, text width=34cm, align=left] (m1) {
+		Baseline Regularization fits a Poisson regression model where the response is the occurrence of a condition of interest.
+		
+		We view each patient’s record as one or more observation periods during which the patient experiences intervals of exposure to drugs and occurrences of the condition on specific days
+		(top two panels in figure).
+		
+		%In the OMOP CDM, observation periods may be explicitly defined, if it is not, we may infer the observation period to last from the first to the last occurrences of conditions, patient visits, or drug exposures. Intervals of exposure to drugs directly correspond to the derived CDM Drug Era table; when this table isn’t available we may infer these intervals from the Drug Exposure clinical data table. The days of condition occurrence are taken to be either the start day of each Condition Era (derived table) or the start day of each Condition Occurrence (clinical table).
+		
+		The model likelihood is
+	};
+	\node[anchor=north, text width=34cm, align=center] (m2) at (m1.south) {
+		$\displaystyle \log \mathcal{L}(\tau, \beta) = \sum_i \sum_j y_{ij} \left( \tau_{ij} + \sum_m x_{ijm} \beta_m \right) - \exp \left( \tau_{ij} + \sum_m x_{ijm} \beta_m \right)$
+	};
+	\node[anchor=north, text width=34cm, align=left] (m3) at (m2.south) {
+		where			
+		\begin{description}
+		\item[$i$] patient (or more generally, observation period)
+		\item[$j$] day
+		\item[$m$] drug
+		\item[$x_{ijm}$] inicator of patient $i$'s exposure to drug $m$ on day $j$
+		\item[$y_{ij}$] indicator of condition occurrence for patient $i$ on day $j$
+		\item[$\beta_m$] contribution to condition risk from drug
+		\item[$\tau_{ij}$] baseline risk for patient $i$ on day $j$
+		\end{description}
+		
+		This likelihood function is overparametrized, and to address this issue, Baseline Regularization solves the regularized optimization problem
+	};
+	\node[anchor=north, text width=34cm, align=center] (m4) at (m3.south) {
+		$\displaystyle \arg \min_{\tau,\beta} - \log \mathcal L (\tau, \beta) + \lambda_1 \| \beta \|_1 + \sum_i \sum_j \lambda_2 |\tau_{i, j+1} - \tau_{ij} | + \lambda_3 \| \tau \|_2^2$
+	};
+	\node[anchor=north, text width=34cm, align=left] (m5) at (m4.south) {
+		\textcite{kuang2017pharmacovigilance} derive the algorithm for solving this optimization efficiently, which we implement in our package.
+		%The result of fitting baseline regularization to data yields the baseline coefficients $\tau$, drug coefficients $\beta$. The latter represent the effect of drug exposures on the risk of condition occurrence. Large positive coefficients may point to adverse reactions, while high magnitude negative coefficients may point to a beneficial effect (reduction of condition risk due to the drug).
+		
+		The bottom two panels of the figure illustrate a time-varying baseline risk for two different patients.
+	};
 	\end{scope}
 	
 	\node[anchor=north west] at (0cm,56cm) {\includegraphics[width=70cm]{patients_plot}};
-	\node[anchor=south west, text width=69cm, align = left] at (1cm,56cm) {\textbf{Figure:} A toy example using 3 drugs showing a drug-exposure-interval representation of the observational data (LOD) about two patients (top two panels), and an illustration of the contribution of each patient's baseline risk (green) and each drug to each patient's risk of condition occurrence.};
+	\node[anchor=south west, text width=69cm, align = left] at (1cm,56cm) {\textbf{Figure:} A toy example using 3 drugs showing a drug-exposure-interval representation of the observational data (LOD) for two patients (top two panels), and an illustration of the contribution of each patient's baseline risk ($\tau_{ij}$) and each drug ($x_{ijm} \beta_m$) to each patient's risk of condition occurrence.};
 	
 	%% R Package
 	\begin{scope}[shift={(73cm,15cm)}]
@@ -247,8 +229,8 @@
 		\lstinputlisting{vignette.R} };
 	\end{scope}
 
-	\begin{scope}[shift={(73cm,55cm)}]
-	\node[color=white, fill=ActionRed, anchor=south west] {\large Features};
+	\begin{scope}[shift={(73cm,55.5cm)}]
+	\node[color=white, fill=ActionRed, anchor=south west] {\large Features \strut};
 	\node[anchor=north west, text width=30cm, align=left] {
 		The current version:
 		\begin{itemize}
@@ -266,11 +248,11 @@
 
 	%% Refs:
 	\begin{scope}[shift={(73cm,69cm)}]
-	\node[color=white, fill=ActionRed, anchor=south west] {\large References};
-	\node[anchor=north west, text width=30cm, align=left] {
-		\fullcite{kuang2016computational}
-		
-		\fullcite{kuang2017pharmacovigilance}
+	\node[color=white, fill=ActionRed, anchor=south west] {\large References \strut};
+	\node[anchor=north west, text width=30cm, align=left]at (0,-0.5cm) {
+		\printbibliography
+		%\fullcite{kuang2016computational}
+		%\fullcite{kuang2017pharmacovigilance}
 	};
 	\end{scope}
 	
